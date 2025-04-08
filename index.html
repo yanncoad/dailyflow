@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="manifest.json">
+    <title>DailyFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --button: #334155;
+            --button-hover: #475569;
+        }
+        .light-mode {
+            --bg: #f1f5f9;
+            --text: #0f172a;
+            --card: #ffffff;
+            --accent: #2563eb;
+            --button: #cbd5e1;
+            --button-hover: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.3s, color 0.3s;
+        }
+        header {
+            width: 100%;
+            background: var(--card);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem;
+        }
+        .nav-buttons button {
+            background: var(--button);
+            color: var(--text);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+        .nav-buttons button:hover {
+            background: var(--button-hover);
+        }
+        .date-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .date-nav button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        #current-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .task-list {
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-top: 1rem;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: var(--button);
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        .task-item.done {
+            background: #10b981;
+            color: #f0fdf4;
+        }
+        .task-label { font-size: 1rem; }
+        .check-icon { font-size: 1.2rem; }
+        .stats-box {
+            display: none;
+            margin-top: 1rem;
+            background: var(--card);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            max-width: 600px;
+            width: 90%;
+        }
+        #stats-details .stats-line {
+            margin: 0.25rem 0;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>DailyFlow</h1>
+    <div class="nav-buttons">
+        <button onclick="toggleStats('yesterday')">Veille</button>
+        <button onclick="toggleStats('week')">Semaine</button>
+        <button onclick="toggleStats('month')">Mois</button>
+        <button onclick="toggleStats('year')">Année</button>
+        <button onclick="toggleTheme()">🌗 Mode clair/sombre</button>
+    </div>
+</header>
+
+<div class="date-nav">
+    <button onclick="changeDate(-1)">◀</button>
+    <div id="current-date"></div>
+    <button onclick="changeDate(1)">▶</button>
+</div>
+
+<div id="celebration-message"></div>
+
+<div class="stats-box" id="stats-box">
+    <h2>Statistiques</h2>
+    <div id="stats-details"></div>
+    <canvas id="chartCanvas" width="300" height="150"></canvas>
+</div>
+
+<div class="task-list" id="task-list"></div>
+
+<script>
+    const tasks = [
+        "Sport", "Anglais", "Lecture", "Série",
+        "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré",
+        "Formation Dev", "Tâche ménagère 1", "Tâche ménagère 2", "Jouer avec enfant"
+    ];
+
+    let currentDate = new Date();
+    let chartInstance = null;
+
+    const formatDateKey = (date) => date.toISOString().split("T")[0];
+
+    function renderDate() {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById("current-date").innerText = currentDate.toLocaleDateString('fr-FR', options);
+    }
+
+    function renderTasks() {
+        const container = document.getElementById("task-list");
+        container.innerHTML = "";
+        const dateKey = formatDateKey(currentDate);
+        const saved = JSON.parse(localStorage.getItem(dateKey) || '{}');
+
+        tasks.forEach(task => {
+            const div = document.createElement("div");
+            div.className = "task-item";
+            if (saved[task]) div.classList.add("done");
+
+            const label = document.createElement("span");
+            label.className = "task-label";
+            label.innerText = task;
+
+            const icon = document.createElement("span");
+            icon.className = "check-icon";
+            icon.innerHTML = saved[task] ? '<i class="fas fa-check-circle"></i>' : '<i class="far fa-circle"></i>';
+
+            div.onclick = () => {
+                const done = div.classList.toggle("done");
+                saved[task] = done;
+                localStorage.setItem(dateKey, JSON.stringify(saved));
+                icon.innerHTML = done ? '<i class="fas fa-check-circle"></i>' : '<i class="far fa-circle"></i>';
+                checkCelebration();
+            };
+
+            div.appendChild(label);
+            div.appendChild(icon);
+            container.appendChild(div);
+        });
+        checkCelebration();
+    }
+
+    function checkCelebration() {
+        const dateKey = formatDateKey(currentDate);
+        const saved = JSON.parse(localStorage.getItem(dateKey) || '{}');
+        const doneCount = tasks.filter(task => saved[task]).length;
+        const celebration = document.getElementById("celebration-message");
+        if (doneCount === tasks.length) {
+            celebration.innerText = "🎉 Félicitations ! Toutes tes tâches sont complètes aujourd'hui ! 🎉";
+            celebration.style = "margin-top: 1rem; padding: 1rem 2rem; background: #10b981; color: #f0fdf4; border-radius: 1rem; animation: pop 0.5s ease-in-out; font-weight: bold; text-align: center; max-width: 600px; width: 90%;";
+        } else {
+            celebration.innerText = "";
+            celebration.style = "display: none";
+        }
+    }
+
+    function toggleStats(period) {
+        const statsBox = document.getElementById("stats-box");
+        if (statsBox.style.display === "block") {
+            statsBox.style.display = "none";
+            return;
+        }
+        showStats(period);
+    }
+
+    function changeDate(offset) {
+        currentDate.setDate(currentDate.getDate() + offset);
+        renderDate();
+        renderTasks();
+        document.getElementById("stats-box").style.display = "none";
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle("light-mode");
+    }
+
+    function getColorForPercent(percent) {
+        if (percent >= 80) return '#10b981';
+        if (percent >= 50) return '#facc15';
+        return '#ef4444';
+    }
+
+    function showStats(period) {
+        const now = new Date();
+        let dates = [], totalTasks = 0, totalDone = 0;
+        let dailyPercents = [], monthlyTotals = Array(12).fill(0), monthlyDone = Array(12).fill(0);
+
+        for (let i = 0; i < 365; i++) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - i);
+            const key = formatDateKey(d);
+            if ((period === 'yesterday' && i === 1) || (period === 'week' && i < 7) || (period === 'month' && i < 30) || (period === 'year' && i < 365)) {
+                dates.unshift(key);
+            }
+        }
+
+        dates.forEach(date => {
+            const d = new Date(date);
+            const monthIndex = d.getMonth();
+            const day = JSON.parse(localStorage.getItem(date) || '{}');
+            let dayTotal = 0, dayDone = 0;
+            tasks.forEach(task => {
+                dayTotal++;
+                if (day[task]) dayDone++;
+            });
+            totalTasks += dayTotal;
+            totalDone += dayDone;
+            if (period === 'week' || period === 'month') dailyPercents.push(dayTotal > 0 ? Math.round((dayDone / dayTotal) * 100) : 0);
+            if (period === 'year') {
+                monthlyTotals[monthIndex] += dayTotal;
+                monthlyDone[monthIndex] += dayDone;
+            }
+        });
+
+        const percent = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+        document.getElementById("stats-details").innerHTML = `
+        <div class="stats-line">Total effectués : <strong style="color:${getColorForPercent(percent)}">${totalDone}</strong> / ${totalTasks}</div>
+        <div class="stats-line">Taux de complétion : <strong style="color:${getColorForPercent(percent)}">${percent}%</strong></div>
+        <div class="stats-line">Moyenne par jour : <strong style="color:${getColorForPercent(percent)}">${(totalDone / dates.length).toFixed(1)}</strong></div>
+      `;
+
+        if (chartInstance) chartInstance.destroy();
+        const ctx = document.getElementById("chartCanvas").getContext("2d");
+
+        if (period === 'week' || period === 'month') {
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates.map(d => d.slice(5)),
+                    datasets: [{
+                        label: '% tâches réalisées',
+                        data: dailyPercents,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, max: 100, ticks: { color: 'var(--text)' } },
+                        x: { ticks: { color: 'var(--text)' } }
+                    },
+                    plugins: { legend: { labels: { color: 'var(--text)' } } }
+                }
+            });
+        } else if (period === 'year') {
+            const monthlyPercents = monthlyTotals.map((total, i) => total > 0 ? Math.round((monthlyDone[i] / total) * 100) : 0);
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"],
+                    datasets: [{
+                        label: '% par mois',
+                        data: monthlyPercents,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, max: 100, ticks: { color: 'var(--text)' } },
+                        x: { ticks: { color: 'var(--text)' } }
+                    },
+                    plugins: { legend: { labels: { color: 'var(--text)' } } }
+                }
+            });
+        } else {
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ["Complété", "Non complété"],
+                    datasets: [{
+                        data: [percent, 100 - percent],
+                        backgroundColor: ["#10b981", "#ef4444"]
+                    }]
+                },
+                options: {
+                    plugins: { legend: { labels: { color: 'var(--text)' } } }
+                }
+            });
+        }
+
+        document.getElementById("stats-box").style.display = "block";
+    }
+
+    renderDate();
+    renderTasks();
+</script>
+</body>
+</html>
