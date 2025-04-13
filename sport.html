@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sport - YannApp</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #22332f;
+      --text-dark: #e8e4d8;
+      --card-dark: #2e403b;
+      --accent-dark: #7ba89c;
+      --check-dark: #7ba89c;
+
+      --bg-light: #f4f4f2;
+      --text-light: #222;
+      --card-light: #ffffff;
+      --accent-light: #7ba89c;
+      --check-light: #7ba89c;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      margin: 0;
+      padding-bottom: 80px;
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .light body {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    header {
+      text-align: center;
+      padding-top: 1.5rem;
+      position: relative;
+    }
+
+    header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--accent-dark);
+      cursor: pointer;
+    }
+
+    .light .toggle-theme {
+      color: var(--accent-light);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+
+    .top-actions button {
+      background: var(--accent-dark);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .light .top-actions button {
+      background: var(--accent-light);
+    }
+
+    .activity {
+      background: var(--card-dark);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .light .activity {
+      background: var(--card-light);
+    }
+
+    .activity.done {
+      background-color: var(--check-dark);
+      color: white;
+    }
+
+    .light .activity.done {
+      background-color: var(--check-light);
+      color: white;
+    }
+
+    .activity-date {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 0.3rem;
+    }
+
+    .activity-sport {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .activity-detail {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-top: 0.3rem;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--card-dark);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    .light .bottom-nav {
+      background: var(--card-light);
+    }
+
+    .nav-icon {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nav-icon span {
+      font-size: 0.7rem;
+      margin-top: 2px;
+    }
+
+    .light .nav-icon {
+      color: var(--text-light);
+    }
+
+    .home-btn {
+      position: relative;
+      top: -25px;
+    }
+
+    .home-circle {
+      background: var(--accent-dark);
+      color: #fff;
+      border-radius: 50%;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .light .home-circle {
+      background: var(--accent-light);
+    }
+
+    #formPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: var(--card-dark);
+      padding: 2rem;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .light .popup-content {
+      background: var(--card-light);
+    }
+
+    .popup-content input,
+    .popup-content textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      border: none;
+      background: #f2f2f2;
+      color: #333;
+    }
+
+    .popup-content button {
+      margin-top: 0.6rem;
+      padding: 0.8rem;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    .popup-content button.add {
+      background: var(--accent-dark);
+      color: white;
+    }
+
+    .light .popup-content button.add {
+      background: var(--accent-light);
+    }
+
+    .popup-content button.cancel {
+      background: none;
+      color: var(--accent-dark);
+    }
+
+    .light .popup-content button.cancel {
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="Logo YannApp">
+  <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
+    <i class="fas fa-adjust"></i>
+  </button>
+</header>
+
+<div class="container">
+  <div class="top-actions">
+    <button onclick="openForm()">Nouvelle activité</button>
+    <button onclick="toggleOld()">Afficher anciennes activités</button>
+  </div>
+
+  <div id="activityList"></div>
+</div>
+
+<nav class="bottom-nav">
+  <a href="sport.html" class="nav-icon">
+    <i class="fas fa-dumbbell"></i>
+    <span>Sport</span>
+  </a>
+  <a href="index.html" class="nav-icon home-btn">
+    <div class="home-circle">
+      <i class="fas fa-home"></i>
+    </div>
+  </a>
+  <a href="lbb.html" class="nav-icon">
+    <i class="fas fa-globe"></i>
+    <span>LBB</span>
+  </a>
+</nav>
+
+<div id="formPopup">
+  <div class="popup-content">
+    <h2 style="margin-top: 0; margin-bottom: 1rem;">Nouvelle activité</h2>
+    <input type="date" id="sportDate">
+    <input type="text" id="sportName" placeholder="Sport">
+    <textarea id="sportDetail" placeholder="Détail"></textarea>
+    <button class="add" onclick="addActivity()">Ajouter</button>
+    <button class="cancel" onclick="closeForm()">Annuler</button>
+  </div>
+</div>
+
+<script>
+  let showOld = false;
+
+  function openForm() {
+    document.getElementById("formPopup").style.display = "flex";
+  }
+
+  function closeForm() {
+    document.getElementById("formPopup").style.display = "none";
+  }
+
+  function addActivity() {
+    const date = document.getElementById("sportDate").value;
+    const name = document.getElementById("sportName").value;
+    const detail = document.getElementById("sportDetail").value;
+    if (!date || !name) {
+      alert("Merci de remplir la date et le sport.");
+      return;
+    }
+
+    const data = JSON.parse(localStorage.getItem("sport-program") || "[]");
+    data.push({ date, sport: name, detail });
+    localStorage.setItem("sport-program", JSON.stringify(data));
+    closeForm();
+    renderActivities();
+  }
+
+  function toggleOld() {
+    showOld = !showOld;
+    renderActivities();
+  }
+
+  function renderActivities() {
+    const container = document.getElementById("activityList");
+    container.innerHTML = "";
+    const data = JSON.parse(localStorage.getItem("sport-program") || "[]");
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    data.forEach(({ date, sport, detail }) => {
+      const dateObj = new Date(date);
+      dateObj.setHours(0,0,0,0);
+      const isPast = dateObj < today;
+      if (!showOld && isPast) return;
+
+      const taskKey = date.split("T")[0];
+      const taskDone = JSON.parse(localStorage.getItem(taskKey) || "{}")["Sport"];
+
+      const div = document.createElement("div");
+      div.className = "activity" + (taskDone ? " done" : "");
+      div.innerHTML = `
+          <div class="activity-date">${dateObj.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</div>
+          <div class="activity-sport">${sport}</div>
+          <div class="activity-detail">${detail}</div>
+        `;
+      container.appendChild(div);
+    });
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.classList.contains("light") ? "light" : "dark";
+    const next = current === "light" ? "dark" : "light";
+    html.classList.remove(current);
+    html.classList.add(next);
+    localStorage.setItem("theme", next);
+  }
+
+  (function initTheme() {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light") {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+  })();
+
+  renderActivities();
+</script>
+
+</body>
+</html>

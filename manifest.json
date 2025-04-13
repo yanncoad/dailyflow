@@ -1,21 +1,22 @@
 {
-  "name": "DailyFlow",
-  "short_name": "DailyFlow",
-  "description": "Suivi quotidien de tes tâches avec stats visuelles",
-  "start_url": ".",
+  "name": "YannApp",
+  "short_name": "YannApp",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#38bdf8",
+  "background_color": "#22332f",
+  "theme_color": "#7ba89c",
+  "description": "Application de suivi quotidien de Yann",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "lang": "fr-FR"
 }

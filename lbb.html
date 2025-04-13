@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Concours - LBB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #22332f;
+            --text-dark: #e8e4d8;
+            --card-dark: #2e403b;
+            --accent-dark: #7ba89c;
+
+            --bg-light: #f4f4f2;
+            --text-light: #222;
+            --card-light: #ffffff;
+            --accent-light: #7ba89c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+            margin: 0;
+            padding-bottom: 80px;
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .light body {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        header {
+            text-align: center;
+            padding-top: 1.5rem;
+            position: relative;
+        }
+
+        header img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-theme {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            color: var(--accent-dark);
+            cursor: pointer;
+        }
+
+        .light .toggle-theme {
+            color: var(--accent-light);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .contest {
+            background: var(--card-dark);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .light .contest {
+            background: var(--card-light);
+        }
+
+        .contest:hover {
+            transform: scale(1.02);
+        }
+
+        .contest.small {
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        .contest h3 {
+            margin: 0 0 0.3rem;
+        }
+
+        .contest span {
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .top-actions button {
+            background: var(--accent-dark);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 14px;
+            cursor: pointer;
+        }
+
+        .light .top-actions button {
+            background: var(--accent-light);
+            color: white;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--card-dark);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .light .bottom-nav {
+            background: var(--card-light);
+        }
+
+        .nav-icon {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-icon span {
+            font-size: 0.7rem;
+            margin-top: 2px;
+        }
+
+        .light .nav-icon {
+            color: var(--text-light);
+        }
+
+        .home-btn {
+            position: relative;
+            top: -25px;
+        }
+
+        .home-circle {
+            background: var(--accent-dark);
+            color: #fff;
+            border-radius: 50%;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .light .home-circle {
+            background: var(--accent-light);
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: var(--card-dark);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .light .popup-content {
+            background: var(--card-light);
+        }
+
+        .popup-content input {
+            padding: 0.6rem;
+            border-radius: 10px;
+            border: none;
+            background: #f1f1f1;
+            color: #111;
+        }
+
+        .popup-content button {
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+
+        .popup-content .save {
+            background: var(--accent-dark);
+            color: white;
+        }
+
+        .light .popup-content .save {
+            background: var(--accent-light);
+        }
+
+        .popup-content .cancel {
+            background: none;
+            color: var(--accent-dark);
+        }
+
+        .light .popup-content .cancel {
+            color: var(--accent-light);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png" alt="Logo YannApp">
+    <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
+        <i class="fas fa-adjust"></i>
+    </button>
+</header>
+
+<div class="container">
+    <div class="top-actions">
+        <button onclick="toggleOld()">Afficher tout</button>
+    </div>
+    <div id="contestList"></div>
+</div>
+
+<nav class="bottom-nav">
+    <a href="sport.html" class="nav-icon">
+        <i class="fas fa-dumbbell"></i>
+        <span>Sport</span>
+    </a>
+    <a href="index.html" class="nav-icon home-btn">
+        <div class="home-circle">
+            <i class="fas fa-home"></i>
+        </div>
+    </a>
+    <a href="lbb.html" class="nav-icon">
+        <i class="fas fa-globe"></i>
+        <span>LBB</span>
+    </a>
+</nav>
+
+<div id="popup">
+    <div class="popup-content">
+        <h3 id="popup-title">Modifier le concours</h3>
+        <input type="text" id="marque" placeholder="Marque">
+        <input type="text" id="lot" placeholder="Lot">
+        <input type="text" id="lotPourNous" placeholder="Lot pour nous">
+        <button class="save" onclick="savePopup()">Enregistrer</button>
+        <button class="cancel" onclick="closePopup()">Annuler</button>
+    </div>
+</div>
+
+<script>
+    let showOld = false;
+    let selectedKey = null;
+    const START_DATE = new Date("2025-04-07T00:00:00");
+
+    function toggleOld() {
+        showOld = !showOld;
+        renderContests();
+    }
+
+    function openPopup(key) {
+        selectedKey = key;
+        const data = JSON.parse(localStorage.getItem("lbb-contests") || "{}");
+        const values = data[key] || {};
+        document.getElementById("marque").value = values.marque || "";
+        document.getElementById("lot").value = values.lot || "";
+        document.getElementById("lotPourNous").value = values.lotPourNous || "";
+        document.getElementById("popup").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+    }
+
+    function savePopup() {
+        const marque = document.getElementById("marque").value;
+        const lot = document.getElementById("lot").value;
+        const lotPourNous = document.getElementById("lotPourNous").value;
+        const data = JSON.parse(localStorage.getItem("lbb-contests") || "{}");
+        data[selectedKey] = { marque, lot, lotPourNous };
+        localStorage.setItem("lbb-contests", JSON.stringify(data));
+        closePopup();
+        renderContests();
+    }
+
+    function renderContests() {
+        const container = document.getElementById("contestList");
+        container.innerHTML = "";
+        const data = JSON.parse(localStorage.getItem("lbb-contests") || "{}");
+
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        let current = new Date(START_DATE);
+        let pastShown = false;
+
+        for (let i = 0; i < 52; i++) {
+            const monday = new Date(current);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            const key = monday.toISOString().split("T")[0];
+            const entry = data[key] || {};
+            const isPast = sunday < today;
+
+            if (!showOld && isPast && pastShown) {
+                current.setDate(current.getDate() + 7);
+                continue;
+            }
+
+            if (isPast) pastShown = true;
+
+            const div = document.createElement("div");
+            div.className = "contest" + (!entry.marque ? " small" : "");
+            div.onclick = () => openPopup(key);
+            div.innerHTML = `
+          <h3>${monday.toLocaleDateString("fr-FR", { day: '2-digit', month: 'long' })} → ${sunday.toLocaleDateString("fr-FR", { day: '2-digit', month: 'long' })}</h3>
+          <span><strong>Marque:</strong> ${entry.marque || "-"}</span>
+          <span><strong>Lot:</strong> ${entry.lot || "-"}</span>
+          <span><strong>Lot pour nous:</strong> ${entry.lotPourNous || "-"}</span>
+        `;
+            container.appendChild(div);
+
+            current.setDate(current.getDate() + 7);
+        }
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.classList.contains("light") ? "light" : "dark";
+        const next = current === "light" ? "dark" : "light";
+        html.classList.remove(current);
+        html.classList.add(next);
+        localStorage.setItem("theme", next);
+    }
+
+    (function initTheme() {
+        const saved = localStorage.getItem("theme");
+        if (saved === "light") {
+            document.documentElement.classList.add("light");
+            document.documentElement.classList.remove("dark");
+        }
+    })();
+
+    renderContests();
+</script>
+
+</body>
+</html>
