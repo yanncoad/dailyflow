@@ -2,9 +2,9 @@
 <html lang="fr" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YannApp</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
       --bg-dark: #22332f;
@@ -12,6 +12,12 @@
       --card-dark: #2e403b;
       --accent-dark: #7ba89c;
       --check-dark: #7ba89c;
+
+      --bg-light: #f4f4f2;
+      --text-light: #222;
+      --card-light: #ffffff;
+      --accent-light: #7ba89c;
+      --check-light: #7ba89c;
     }
 
     body {
@@ -20,70 +26,110 @@
       padding-bottom: 80px;
       background-color: var(--bg-dark);
       color: var(--text-dark);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .light body {
+      background-color: var(--bg-light);
+      color: var(--text-light);
     }
 
     header {
       text-align: center;
-      padding: 2rem 0 1rem;
+      padding-top: 1.5rem;
+      position: relative;
     }
 
     header img {
       width: 80px;
       height: 80px;
       border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--accent-dark);
+      cursor: pointer;
+    }
+
+    .light .toggle-theme {
+      color: var(--accent-light);
     }
 
     .date-navigation {
-      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 2rem auto 1rem auto;
     }
 
     .date-container {
+      background: var(--card-dark);
+      padding: 0.6rem 1rem;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
-      background: var(--card-dark);
-      border-radius: 1rem;
-      padding: 0.5rem 1rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      font-weight: 500;
-      font-size: 1rem;
-      gap: 1rem;
+      gap: 1.5rem;
+    }
+
+    .light .date-container {
+      background: var(--card-light);
     }
 
     .date-container button {
       background: var(--accent-dark);
       border: none;
       color: white;
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      font-size: 1.2rem;
+      font-size: 1rem;
       cursor: pointer;
     }
 
-    #taskList {
-      width: 90%;
+    .light .date-container button {
+      background: var(--accent-light);
+    }
+
+    .todo-list {
+      padding: 0 1rem;
       max-width: 600px;
-      margin-top: 1.5rem;
+      margin: 0 auto;
     }
 
     .task {
-      background: var(--card-dark);
+      background-color: var(--card-dark);
       padding: 1rem 1.2rem;
-      margin: 0.5rem 0;
+      margin: 0.6rem 0;
       border-radius: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
+      transition: background 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       cursor: pointer;
+    }
+
+    .light .task {
+      background-color: var(--card-light);
     }
 
     .task.done {
       background-color: var(--check-dark);
+      color: white;
+    }
+
+    .light .task.done {
+      background-color: var(--check-light);
       color: white;
     }
 
@@ -95,14 +141,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      border: 2px solid white;
+      transition: background 0.3s, color 0.3s;
     }
 
     .task.done i {
-      background: white;
+      background-color: white;
       color: var(--check-dark);
-      border: none;
+    }
+
+    .light .task.done i {
+      background-color: white;
+      color: var(--check-light);
+    }
+
+    .task:not(.done) i {
+      background: transparent;
+      color: #ccc;
     }
 
     .bottom-nav {
@@ -118,6 +172,10 @@
       z-index: 1000;
     }
 
+    .light .bottom-nav {
+      background: var(--card-light);
+    }
+
     .nav-icon {
       color: var(--text-dark);
       text-decoration: none;
@@ -130,6 +188,10 @@
     .nav-icon span {
       font-size: 0.7rem;
       margin-top: 2px;
+    }
+
+    .light .nav-icon {
+      color: var(--text-light);
     }
 
     .home-btn {
@@ -147,41 +209,117 @@
       justify-content: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
+
+    .light .home-circle {
+      background: var(--accent-light);
+    }
   </style>
-</head>
-<body>
-  <header>
-    <img src="logo.png" alt="Logo YannApp">
-  </header>
-
-  <div class="date-navigation">
-    <div class="date-container">
-      <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
-      <span id="currentDate">Date</span>
-      <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
-    </div>
-  </div>
-
-  <div id="taskList"></div>
-
-  <nav class="bottom-nav">
-    <a href="sport.html" class="nav-icon">
-      <i class="fas fa-dumbbell"></i>
-      <span>Sport</span>
-    </a>
-    <a href="index.html" class="nav-icon home-btn">
-      <div class="home-circle">
-        <i class="fas fa-home"></i>
-      </div>
-    </a>
-    <a href="lbb.html" class="nav-icon">
-      <i class="fas fa-globe"></i>
-      <span>LBB</span>
-    </a>
-  </nav>
 
   <!-- Firebase -->
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="index-firebase.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
+      authDomain: "yannapp-d9ea1.firebaseapp.com",
+      projectId: "yannapp-d9ea1",
+      storageBucket: "yannapp-d9ea1.appspot.com",
+      messagingSenderId: "34473176681",
+      appId: "1:34473176681:web:bc6d23f91bdfe1b2f4fcf8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tasksBase = ["Anglais", "Lecture", "Série", "Post Insta LBB", "Post Tiktok LBB", "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré", "Formation Dev", "Tâche ménagère", "Jouer avec enfant"];
+
+    const taskListEl = document.getElementById("taskList");
+    let selectedDate = new Date();
+
+    async function updateDate() {
+      const options = { weekday: 'long', day: 'numeric', month: 'long' };
+      const formatted = selectedDate.toLocaleDateString('fr-FR', options);
+      document.getElementById("currentDate").textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      await renderTasks();
+    }
+
+    function getDateKey() {
+      return selectedDate.toISOString().split("T")[0];
+    }
+
+    async function renderTasks() {
+      const key = getDateKey();
+      const ref = doc(db, "taches", key);
+      const snap = await getDoc(ref);
+      const done = snap.exists() ? snap.data() : {};
+
+      taskListEl.innerHTML = "";
+      tasksBase.forEach(task => {
+        const isDone = done[task];
+        const div = document.createElement("div");
+        div.className = "task" + (isDone ? " done" : "");
+        div.innerHTML = `<span>${task}</span><i class="${isDone ? 'fas fa-check' : 'far fa-circle'}"></i>`;
+        div.addEventListener("click", async () => {
+          done[task] = !done[task];
+          await setDoc(ref, done);
+          renderTasks();
+        });
+        taskListEl.appendChild(div);
+      });
+    }
+
+    function changeDate(offset) {
+      selectedDate.setDate(selectedDate.getDate() + offset);
+      updateDate();
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      html.classList.toggle("light");
+      html.classList.toggle("dark");
+    }
+
+    window.changeDate = changeDate;
+    window.toggleTheme = toggleTheme;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      updateDate();
+    });
+  </script>
+</head>
+<body>
+<header>
+  <img src="logo.png" alt="Logo YannApp" />
+  <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
+    <i class="fas fa-adjust"></i>
+  </button>
+</header>
+
+<div class="date-navigation">
+  <div class="date-container">
+    <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+    <span id="currentDate">Date</span>
+    <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<div class="todo-list" id="taskList"></div>
+
+<nav class="bottom-nav">
+  <a href="sport.html" class="nav-icon">
+    <i class="fas fa-dumbbell"></i>
+    <span>Sport</span>
+  </a>
+  <a href="index.html" class="nav-icon home-btn">
+    <div class="home-circle">
+      <i class="fas fa-home"></i>
+    </div>
+  </a>
+  <a href="lbb.html" class="nav-icon">
+    <i class="fas fa-globe"></i>
+    <span>LBB</span>
+  </a>
+</nav>
 </body>
 </html>
