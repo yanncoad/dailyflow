@@ -1,364 +1,112 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YannApp</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="github-sync.js" defer></script>
-  <style>
-    :root {
-      --bg-dark: #22332f;
-      --text-dark: #e8e4d8;
-      --card-dark: #2e403b;
-      --accent-dark: #7ba89c;
-      --check-dark: #7ba89c;
-
-      --bg-light: #f4f4f2;
-      --text-light: #222;
-      --card-light: #ffffff;
-      --accent-light: #7ba89c;
-      --check-light: #7ba89c;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
-      margin: 0;
-      padding-bottom: 80px;
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .light body {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
-    header {
-      text-align: center;
-      padding-top: 1.5rem;
-      position: relative;
-    }
-
-    header img {
-      width: 80px;
-      height: 80px;
-      border-radius: 16px;
-      margin-bottom: 1rem;
-    }
-
-    .toggle-theme {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--accent-dark);
-      cursor: pointer;
-    }
-
-    .light .toggle-theme {
-      color: var(--accent-light);
-    }
-
-    .date-navigation {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 1.5rem auto 0.5rem;
-    }
-
-    .date-container {
-      background: var(--card-dark);
-      padding: 0.6rem 1rem;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: 500;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .light .date-container {
-      background: var(--card-light);
-    }
-
-    .date-container button {
-      background: var(--accent-dark);
-      border: none;
-      color: white;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .light .date-container button {
-      background: var(--accent-light);
-    }
-
-    .todo-list {
-      padding: 0 1rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .task {
-      background-color: var(--card-dark);
-      padding: 1rem 1.2rem;
-      margin: 0.6rem 0;
-      border-radius: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.3s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-    }
-
-    .light .task {
-      background-color: var(--card-light);
-    }
-
-    .task.done {
-      background-color: var(--check-dark);
-      color: white;
-    }
-
-    .light .task.done {
-      background-color: var(--check-light);
-      color: white;
-    }
-
-    .task i {
-      font-size: 1.2rem;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .task.done i {
-      background-color: white;
-      color: var(--check-dark);
-    }
-
-    .light .task.done i {
-      background-color: white;
-      color: var(--check-light);
-    }
-
-    .task:not(.done) i {
-      background: transparent;
-      color: #ccc;
-    }
-
-    .sync-button {
-      margin: 0.5rem auto;
-      text-align: center;
-    }
-
-    .sync-button button {
-      background: var(--accent-dark);
-      color: white;
-      border: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
-    .light .sync-button button {
-      background: var(--accent-light);
-    }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 70px;
-      background: var(--card-dark);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-
-    .light .bottom-nav {
-      background: var(--card-light);
-    }
-
-    .nav-icon {
-      color: var(--text-dark);
-      text-decoration: none;
-      font-size: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .nav-icon span {
-      font-size: 0.7rem;
-      margin-top: 2px;
-    }
-
-    .light .nav-icon {
-      color: var(--text-light);
-    }
-
-    .home-btn {
-      position: relative;
-      top: -25px;
-    }
-
-    .home-circle {
-      background: var(--accent-dark);
-      color: #fff;
-      border-radius: 50%;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .light .home-circle {
-      background: var(--accent-light);
-    }
-  </style>
 </head>
 <body>
-
-  <header>
-    <img src="logo.png" alt="Logo YannApp">
-    <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
-      <i class="fas fa-adjust"></i>
-    </button>
-  </header>
-
-  <div class="sync-button">
-    <button onclick="loadFromGitHub()">Mettre à jour les données</button>
+  <h1>Bienvenue sur YannApp</h1>
+  <button id="login-btn">Se connecter avec Google</button>
+  <div id="user-info" style="display:none;">
+    <p>Connecté en tant que : <span id="user-name"></span></p>
+    <input type="text" id="task-input" placeholder="Nouvelle tâche" />
+    <button id="add-task-btn">Ajouter</button>
+    <ul id="task-list"></ul>
   </div>
 
-  <div class="date-navigation">
-    <div class="date-container">
-      <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
-      <span id="currentDate">Date</span>
-      <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
-    </div>
-  </div>
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-  <div class="todo-list" id="taskList"></div>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
+      authDomain: "yannapp-d9ea1.firebaseapp.com",
+      projectId: "yannapp-d9ea1",
+      storageBucket: "yannapp-d9ea1.firebasestorage.app",
+      messagingSenderId: "34473176681",
+      appId: "1:34473176681:web:bc6d23f91bdfe1b2f4fcf8"
+    };
 
-  <nav class="bottom-nav">
-    <a href="sport.html" class="nav-icon">
-      <i class="fas fa-dumbbell"></i>
-      <span>Sport</span>
-    </a>
-    <a href="index.html" class="nav-icon home-btn">
-      <div class="home-circle">
-        <i class="fas fa-home"></i>
-      </div>
-    </a>
-    <a href="lbb.html" class="nav-icon">
-      <i class="fas fa-globe"></i>
-      <span>LBB</span>
-    </a>
-  </nav>
+    // Initialisation Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-  <script>
-    const baseTasks = [
-      "Anglais", "Lecture", "Série", "Post Insta LBB", "Post Tiktok LBB",
-      "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré",
-      "Formation Dev", "Tâche ménagère", "Jouer avec enfant"
-    ];
+    const loginBtn = document.getElementById("login-btn");
+    const userInfo = document.getElementById("user-info");
+    const userName = document.getElementById("user-name");
+    const taskInput = document.getElementById("task-input");
+    const addTaskBtn = document.getElementById("add-task-btn");
+    const taskList = document.getElementById("task-list");
 
-    let selectedDate = new Date();
+    let currentUser = null;
 
-    function updateDate() {
-      const options = { weekday: 'long', day: 'numeric', month: 'long' };
-      const formattedDate = selectedDate.toLocaleDateString('fr-FR', options);
-      document.getElementById("currentDate").textContent =
-        formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-      renderTasks();
-    }
+    // Connexion utilisateur
+    loginBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          currentUser = result.user;
+          userName.textContent = currentUser.displayName;
+          userInfo.style.display = "block";
+          loginBtn.style.display = "none";
+          loadTasks();
+        })
+        .catch((error) => {
+          console.error("Erreur de connexion :", error);
+        });
+    });
 
-    function changeDate(offset) {
-      selectedDate.setDate(selectedDate.getDate() + offset);
-      updateDate();
-    }
-
-    function isSportPlanned(dateStr) {
-      const activities = JSON.parse(localStorage.getItem("sport-program") || "[]");
-      return activities.some(a => a.date === dateStr);
-    }
-
-    function renderTasks() {
-      const container = document.getElementById("taskList");
-      container.innerHTML = "";
-      const dateKey = getDateKey();
-      const todayStr = dateKey;
-      const tasks = JSON.parse(localStorage.getItem(dateKey)) || {};
-      let allTasks = [...baseTasks];
-
-      if (isSportPlanned(todayStr)) {
-        allTasks.unshift("Sport");
+    // Observer l'état de connexion
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        userName.textContent = currentUser.displayName;
+        userInfo.style.display = "block";
+        loginBtn.style.display = "none";
+        loadTasks();
       }
+    });
 
-      allTasks.forEach(task => {
-        const isDone = tasks[task];
-        const taskDiv = document.createElement("div");
-        taskDiv.className = "task" + (isDone ? " done" : "");
-        taskDiv.innerHTML = `
-          <span>${task}</span>
-          <i class="${isDone ? 'fas fa-check' : 'far fa-circle'}"></i>
-        `;
-        taskDiv.addEventListener("click", () => toggleTask(task));
-        container.appendChild(taskDiv);
+    // Ajouter une tâche
+    addTaskBtn.addEventListener("click", async () => {
+      const task = taskInput.value.trim();
+      if (task === "") return;
+      const docRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      let tasks = [];
+      if (docSnap.exists()) {
+        tasks = docSnap.data().tasks || [];
+      }
+      tasks.push(task);
+      await setDoc(docRef, { tasks });
+      taskInput.value = "";
+      displayTasks(tasks);
+    });
+
+    // Charger les tâches
+    async function loadTasks() {
+      const docRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const tasks = docSnap.data().tasks || [];
+        displayTasks(tasks);
+      }
+    }
+
+    // Afficher les tâches
+    function displayTasks(tasks) {
+      taskList.innerHTML = "";
+      tasks.forEach((task) => {
+        const li = document.createElement("li");
+        li.textContent = task;
+        taskList.appendChild(li);
       });
     }
-
-    function toggleTask(taskName) {
-      const key = getDateKey();
-      let tasks = JSON.parse(localStorage.getItem(key)) || {};
-      tasks[taskName] = !tasks[taskName];
-      localStorage.setItem(key, JSON.stringify(tasks));
-      renderTasks();
-      syncToGitHub(); // 🔁 synchronisation automatique
-    }
-
-    function getDateKey() {
-      return selectedDate.toISOString().split("T")[0];
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.classList.contains("light") ? "light" : "dark";
-      const next = current === "light" ? "dark" : "light";
-      html.classList.remove(current);
-      html.classList.add(next);
-      localStorage.setItem("theme", next);
-    }
-
-    (function initTheme() {
-      const saved = localStorage.getItem("theme");
-      if (saved === "light") {
-        document.documentElement.classList.add("light");
-        document.documentElement.classList.remove("dark");
-      }
-    })();
-
-    updateDate();
   </script>
-
 </body>
 </html>
