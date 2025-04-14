@@ -6,87 +6,39 @@
   <title>YannApp</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    :root {
-      --bg-dark: #22332f;
-      --text-dark: #e8e4d8;
-      --card-dark: #2e403b;
-      --accent-dark: #7ba89c;
-      --check-dark: #7ba89c;
-
-      --bg-light: #f4f4f2;
-      --text-light: #222;
-      --card-light: #ffffff;
-      --accent-light: #7ba89c;
-      --check-light: #7ba89c;
-    }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
       margin: 0;
       padding-bottom: 80px;
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-      transition: background 0.3s, color 0.3s;
+      background-color: #22332f;
+      color: #e8e4d8;
     }
-
-    .light body {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
     header {
       text-align: center;
       padding-top: 1.5rem;
       position: relative;
     }
-
     header img {
       width: 80px;
       height: 80px;
       border-radius: 16px;
       margin-bottom: 1rem;
     }
-
-    .toggle-theme {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--accent-dark);
-      cursor: pointer;
-    }
-
-    .light .toggle-theme {
-      color: var(--accent-light);
-    }
-
     .date-navigation {
       display: flex;
       justify-content: center;
-      align-items: center;
       margin: 2rem auto 1rem auto;
     }
-
     .date-container {
-      background: var(--card-dark);
+      background: #2e403b;
       padding: 0.6rem 1rem;
       border-radius: 14px;
-      font-size: 1rem;
-      font-weight: 500;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
       gap: 1.5rem;
     }
-
-    .light .date-container {
-      background: var(--card-light);
-    }
-
     .date-container button {
-      background: var(--accent-dark);
+      background: #7ba89c;
       border: none;
       color: white;
       width: 34px;
@@ -94,245 +46,134 @@
       border-radius: 50%;
       font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s;
     }
-
-    .light .date-container button {
-      background: var(--accent-light);
-    }
-
     .todo-list {
       padding: 0 1rem;
       max-width: 600px;
       margin: 0 auto;
     }
-
     .task {
-      background-color: var(--card-dark);
+      background-color: #2e403b;
       padding: 1rem 1.2rem;
       margin: 0.6rem 0;
       border-radius: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.3s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       cursor: pointer;
     }
-
-    .light .task {
-      background-color: var(--card-light);
-    }
-
     .task.done {
-      background-color: var(--check-dark);
+      background-color: #7ba89c;
       color: white;
     }
-
-    .light .task.done {
-      background-color: var(--check-light);
-      color: white;
-    }
-
     .task i {
       font-size: 1.2rem;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    .task.done i {
-      background-color: white;
-      color: var(--check-dark);
-    }
-
-    .light .task.done i {
-      background-color: white;
-      color: var(--check-light);
-    }
-
-    .task:not(.done) i {
-      background: transparent;
-      color: #ccc;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 70px;
-      background: var(--card-dark);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-    }
-
-    .light .bottom-nav {
-      background: var(--card-light);
-    }
-
-    .nav-icon {
-      color: var(--text-dark);
-      text-decoration: none;
-      font-size: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .nav-icon span {
-      font-size: 0.7rem;
-      margin-top: 2px;
-    }
-
-    .light .nav-icon {
-      color: var(--text-light);
-    }
-
-    .home-btn {
-      position: relative;
-      top: -25px;
-    }
-
-    .home-circle {
-      background: var(--accent-dark);
-      color: #fff;
-      border-radius: 50%;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .light .home-circle {
-      background: var(--accent-light);
     }
   </style>
 </head>
 <body>
-
-<header>
-  <img src="logo.png" alt="Logo YannApp" />
-  <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
-    <i class="fas fa-adjust"></i>
-  </button>
-</header>
-
-<div class="date-navigation">
-  <div class="date-container">
-    <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
-    <span id="currentDate">Date</span>
-    <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
-  </div>
-</div>
-
-<div class="todo-list" id="taskList"></div>
-
-<nav class="bottom-nav">
-  <a href="sport.html" class="nav-icon">
-    <i class="fas fa-dumbbell"></i>
-    <span>Sport</span>
-  </a>
-  <a href="index.html" class="nav-icon home-btn">
-    <div class="home-circle">
-      <i class="fas fa-home"></i>
+  <header>
+    <img src="logo.png" alt="Logo YannApp">
+  </header>
+  <div class="date-navigation">
+    <div class="date-container">
+      <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+      <span id="currentDate">Date</span>
+      <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
     </div>
-  </a>
-  <a href="lbb.html" class="nav-icon">
-    <i class="fas fa-globe"></i>
-    <span>LBB</span>
-  </a>
-</nav>
+  </div>
+  <div class="todo-list" id="taskList"></div>
 
-<script>
-  const baseTasks = [
-    "Anglais", "Lecture", "Série", "Post Insta LBB", "Post Tiktok LBB",
-    "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré",
-    "Formation Dev", "Tâche ménagère", "Jouer avec enfant"
-  ];
+  <!-- Firebase + logique de tâches -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
-  let selectedDate = new Date();
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
+      authDomain: "yannapp-d9ea1.firebaseapp.com",
+      projectId: "yannapp-d9ea1",
+      storageBucket: "yannapp-d9ea1.firebasestorage.app",
+      messagingSenderId: "34473176681",
+      appId: "1:34473176681:web:bc6d23f91bdfe1b2f4fcf8"
+    };
 
-  function updateDate() {
-    const options = { weekday: 'long', day: 'numeric', month: 'long' };
-    const formattedDate = selectedDate.toLocaleDateString('fr-FR', options);
-    document.getElementById("currentDate").textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-    renderTasks();
-  }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-  function changeDate(offset) {
-    selectedDate.setDate(selectedDate.getDate() + offset);
-    updateDate();
-  }
+    let currentUser = null;
+    let selectedDate = new Date();
+    const baseTasks = [
+      "Anglais", "Lecture", "Série", "Post Insta LBB", "Post Tiktok LBB",
+      "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré",
+      "Formation Dev", "Tâche ménagère", "Jouer avec enfant"
+    ];
 
-  function isSportPlanned(dateStr) {
-    const activities = JSON.parse(localStorage.getItem("sport-program") || "[]");
-    return activities.some(a => a.date === dateStr);
-  }
-
-  function renderTasks() {
-    const container = document.getElementById("taskList");
-    container.innerHTML = "";
-    const dateKey = getDateKey();
-    const todayStr = dateKey;
-    const tasks = JSON.parse(localStorage.getItem(dateKey)) || {};
-    let allTasks = [...baseTasks];
-
-    if (isSportPlanned(todayStr)) {
-      allTasks.unshift("Sport");
+    function getDateKey() {
+      return selectedDate.toISOString().split("T")[0];
     }
 
-    allTasks.forEach(task => {
-      const isDone = tasks[task];
-      const taskDiv = document.createElement("div");
-      taskDiv.className = "task" + (isDone ? " done" : "");
-      taskDiv.innerHTML = `
-        <span>${task}</span>
-        <i class="${isDone ? 'fas fa-check' : 'far fa-circle'}"></i>
-      `;
-      taskDiv.addEventListener("click", () => toggleTask(task));
-      container.appendChild(taskDiv);
+    function updateDateDisplay() {
+      const options = { weekday: 'long', day: 'numeric', month: 'long' };
+      const formatted = selectedDate.toLocaleDateString('fr-FR', options);
+      document.getElementById("currentDate").textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
+
+    function changeDate(offset) {
+      selectedDate.setDate(selectedDate.getDate() + offset);
+      updateDateDisplay();
+      loadTasks();
+    }
+
+    async function loadTasks() {
+      if (!currentUser) return;
+      const dateKey = getDateKey();
+      const docRef = doc(db, "users", currentUser.uid, "tasks", dateKey);
+      const docSnap = await getDoc(docRef);
+      const taskList = docSnap.exists() ? docSnap.data() : Object.fromEntries(baseTasks.map(t => [t, false]));
+      renderTasks(taskList);
+    }
+
+    async function toggleTask(taskName) {
+      const dateKey = getDateKey();
+      const docRef = doc(db, "users", currentUser.uid, "tasks", dateKey);
+      const docSnap = await getDoc(docRef);
+      let taskData = docSnap.exists() ? docSnap.data() : Object.fromEntries(baseTasks.map(t => [t, false]));
+      taskData[taskName] = !taskData[taskName];
+      await setDoc(docRef, taskData);
+      renderTasks(taskData);
+    }
+
+    function renderTasks(taskData) {
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+      for (const [name, done] of Object.entries(taskData)) {
+        const div = document.createElement("div");
+        div.className = "task" + (done ? " done" : "");
+        div.innerHTML = \`<span>\${name}</span><i class="\${done ? 'fas fa-check' : 'far fa-circle'}"></i>\`;
+        div.addEventListener("click", () => toggleTask(name));
+        container.appendChild(div);
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        updateDateDisplay();
+        loadTasks();
+      } else {
+        signInWithPopup(auth, provider).then((result) => {
+          currentUser = result.user;
+          updateDateDisplay();
+          loadTasks();
+        }).catch(console.error);
+      }
     });
-  }
 
-  function toggleTask(taskName) {
-    const key = getDateKey();
-    let tasks = JSON.parse(localStorage.getItem(key)) || {};
-    tasks[taskName] = !tasks[taskName];
-    localStorage.setItem(key, JSON.stringify(tasks));
-    renderTasks();
-  }
-
-  function getDateKey() {
-    return selectedDate.toISOString().split("T")[0];
-  }
-
-  function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.classList.contains("light") ? "light" : "dark";
-    const next = current === "light" ? "dark" : "light";
-    html.classList.remove(current);
-    html.classList.add(next);
-    localStorage.setItem("theme", next);
-  }
-
-  (function initTheme() {
-    const saved = localStorage.getItem("theme");
-    if (saved === "light") {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    }
-  })();
-
-  updateDate();
-</script>
-
+    window.changeDate = changeDate;
+  </script>
 </body>
 </html>
