@@ -61,55 +61,6 @@
       color: var(--accent-light);
     }
 
-    .sport-list {
-      padding: 1rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .activity-card {
-      background-color: var(--card-dark);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .light .activity-card {
-      background-color: var(--card-light);
-    }
-
-    .activity-card h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    .activity-card p {
-      margin: 0.3rem 0 0 0;
-      font-size: 0.95rem;
-    }
-
-    .activity-card .date {
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-
-    .delete-btn {
-      position: absolute;
-      top: 0.7rem;
-      right: 0.7rem;
-      background: transparent;
-      color: red;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-
     .add-btn {
       display: block;
       margin: 1rem auto;
@@ -124,6 +75,60 @@
 
     .light .add-btn {
       background: var(--accent-light);
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .popup {
+      background: var(--card-dark);
+      padding: 2rem;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .light .popup {
+      background: var(--card-light);
+    }
+
+    .popup h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .popup input, .popup textarea {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .popup button {
+      padding: 0.5rem 1rem;
+      border: none;
+      margin-right: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .popup .validate {
+      background: var(--accent-dark);
+      color: white;
+    }
+
+    .popup .cancel {
+      background: #ccc;
     }
 
     .bottom-nav {
@@ -183,8 +188,15 @@
 
   <button class="add-btn" onclick="openPopup()">+ Ajouter une activité</button>
 
-  <div class="sport-list" id="sportList">
-    <!-- Les séances s’afficheront ici -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <h2>Nouvelle activité</h2>
+      <input type="date" id="dateInput" />
+      <input type="text" id="sportInput" placeholder="Nom du sport" />
+      <textarea id="detailInput" placeholder="Détail..."></textarea>
+      <button class="validate" onclick="addActivity()">Ajouter</button>
+      <button class="cancel" onclick="closePopup()">Annuler</button>
+    </div>
   </div>
 
   <nav class="bottom-nav">
@@ -203,7 +215,19 @@
     </a>
   </nav>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
+      authDomain: "yannapp-d9ea1.firebaseapp.com",
+      projectId: "yannapp-d9ea1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     function toggleTheme() {
       const html = document.documentElement;
       html.classList.toggle("light");
@@ -211,7 +235,29 @@
     }
 
     function openPopup() {
-      alert("La popup d’ajout d’activité va être ajoutée ensuite !");
+      document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    async function addActivity() {
+      const date = document.getElementById("dateInput").value;
+      const sport = document.getElementById("sportInput").value;
+      const detail = document.getElementById("detailInput").value;
+
+      if (date && sport) {
+        await addDoc(collection(db, "sport-program"), {
+          date,
+          sport,
+          detail
+        });
+        closePopup();
+        alert("Activité ajoutée !");
+      } else {
+        alert("Merci de remplir au moins la date et le sport.");
+      }
     }
   </script>
 </body>
