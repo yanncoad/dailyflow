@@ -228,3 +228,151 @@
   </style>
 </head>
 <body>
+  <header>
+    <img src="logo.png" alt="YannApp">
+    <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
+      <i class="fas fa-adjust"></i>
+    </button>
+  </header>
+
+  <button class="add-btn" onclick="openPopup()">+ Ajouter une activité</button>
+  <button class="add-btn" onclick="toggleOldActivities()" id="toggleOldBtn">Afficher les anciennes activités</button>
+
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <h2>Nouvelle activité</h2>
+      <input type="date" id="dateInput" />
+      <input type="text" id="sportInput" placeholder="Nom du sport" />
+      <textarea id="detailInput" placeholder="Détail..."></textarea>
+      <button class="validate" onclick="addActivity()">Ajouter</button>
+      <button class="cancel" onclick="closePopup()">Annuler</button>
+    </div>
+  </div>
+
+  <div class="sport-list" id="sportList"></div>
+
+  <nav class="bottom-nav">
+    <a href="sport.html" class="nav-icon">
+      <i class="fas fa-dumbbell"></i>
+      <span>Sport</span>
+    </a>
+    <a href="index.html" class="nav-icon home-btn">
+      <div class="home-circle">
+        <i class="fas fa-home"></i>
+      </div>
+    </a>
+    <a href="lbb.html" class="nav-icon">
+      <i class="fas fa-globe"></i>
+      <span>LBB</span>
+    </a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
+      authDomain: "yannapp-d9ea1.firebaseapp.com",
+      projectId: "yannapp-d9ea1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let showOldActivities = false;
+
+    window.toggleTheme = function () {
+      const html = document.documentElement;
+      const current = html.classList.contains("light") ? "light" : "dark";
+      const next = current === "light" ? "dark" : "light";
+      html.classList.remove(current);
+      html.classList.add(next);
+      localStorage.setItem("theme", next);
+    };
+
+    (function initTheme() {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light") {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+      }
+    })();
+
+    window.openPopup = function () {
+      document.getElementById("popupOverlay").style.display = "flex";
+    };
+
+    window.closePopup = function () {
+      document.getElementById("popupOverlay").style.display = "none";
+    };
+
+    window.toggleOldActivities = function () {
+      showOldActivities = !showOldActivities;
+      document.getElementById("toggleOldBtn").textContent = showOldActivities
+        ? "Masquer les anciennes activités"
+        : "Afficher les anciennes activités";
+      loadActivities();
+    };
+
+    window.addActivity = async function () {
+      const date = document.getElementById("dateInput").value;
+      const sport = document.getElementById("sportInput").value;
+      const detail = document.getElementById("detailInput").value;
+      if (!date || !sport) {
+        alert("Merci de remplir au moins la date et le sport.");
+        return;
+      }
+
+      await addDoc(collection(db, "sport-program"), {
+        date,
+        sport,
+        detail
+      });
+
+      closePopup();
+      loadActivities();
+    };
+
+    window.deleteActivity = async function (id) {
+      if (confirm("Supprimer cette activité ?")) {
+        await deleteDoc(doc(db, "sport-program", id));
+        loadActivities();
+      }
+    };
+
+    async function loadActivities() {
+      const container = document.getElementById("sportList");
+      container.innerHTML = "";
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const q = query(collection(db, "sport-program"), orderBy("date"));
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach(docSnap => {
+        const { date, sport, detail } = docSnap.data();
+        const dateObj = new Date(date);
+        dateObj.setHours(0, 0, 0, 0);
+        if (dateObj < today && !showOldActivities) return;
+
+        const div = document.createElement("div");
+        div.className = "activity-card";
+        div.innerHTML = `
+          <button class="delete-btn" onclick="deleteActivity('${docSnap.id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+          <div class="date">${dateObj.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}</div>
+          <h3>${sport}</h3>
+          <p>${detail}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    loadActivities();
+  </script>
+</body>
+</html>
