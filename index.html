@@ -33,7 +33,7 @@
     }
     header {
       text-align: center;
-      padding: 2rem 0 1rem;
+      padding: 1.5rem 1rem 0.5rem;
       position: relative;
     }
     header img {
@@ -53,6 +53,30 @@
     }
     .light .toggle-theme {
       color: var(--accent-light);
+    }
+    .date-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .date-btn {
+      background: var(--accent-dark);
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    .light .date-btn {
+      background: var(--accent-light);
+    }
+    #dateLabel {
+      font-weight: bold;
+      font-size: 1.1rem;
     }
     .task-list {
       padding: 1rem;
@@ -89,7 +113,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.3s, color 0.3s;
     }
     .task.done i {
       background-color: white;
@@ -206,7 +229,6 @@
     }
 
     async function updateDate() {
-      document.title = "YannApp – " + formatDateLabel(selectedDate);
       document.getElementById("dateLabel").textContent = formatDateLabel(selectedDate);
       await renderTasks();
     }
@@ -252,10 +274,10 @@
     </button>
   </header>
 
-  <div style="text-align: center; margin: 1rem;">
-    <button onclick="changeDate(-1)">←</button>
-    <strong id="dateLabel">Date</strong>
-    <button onclick="changeDate(1)">→</button>
+  <div class="date-nav">
+    <button class="date-btn" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
+    <div id="dateLabel">Date</div>
+    <button class="date-btn" onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
   </div>
 
   <div class="task-list" id="taskList"></div>
