@@ -19,34 +19,28 @@
       --accent-light: #7ba89c;
       --check-light: #7ba89c;
     }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
       margin: 0;
       padding-bottom: 80px;
       background-color: var(--bg-dark);
       color: var(--text-dark);
       transition: background 0.3s, color 0.3s;
     }
-
     .light body {
       background-color: var(--bg-light);
       color: var(--text-light);
     }
-
     header {
       text-align: center;
-      padding-top: 1.5rem;
+      padding: 2rem 0 1rem;
       position: relative;
     }
-
     header img {
       width: 80px;
       height: 80px;
       border-radius: 16px;
-      margin-bottom: 1rem;
     }
-
     .toggle-theme {
       position: absolute;
       top: 1rem;
@@ -57,82 +51,36 @@
       color: var(--accent-dark);
       cursor: pointer;
     }
-
     .light .toggle-theme {
       color: var(--accent-light);
     }
-
-    .date-navigation {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 2rem auto 1rem auto;
-    }
-
-    .date-container {
-      background: var(--card-dark);
-      padding: 0.6rem 1rem;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: 500;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .light .date-container {
-      background: var(--card-light);
-    }
-
-    .date-container button {
-      background: var(--accent-dark);
-      border: none;
-      color: white;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .light .date-container button {
-      background: var(--accent-light);
-    }
-
-    .todo-list {
-      padding: 0 1rem;
+    .task-list {
+      padding: 1rem;
       max-width: 600px;
       margin: 0 auto;
     }
-
     .task {
       background-color: var(--card-dark);
-      padding: 1rem 1.2rem;
-      margin: 0.6rem 0;
-      border-radius: 14px;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.3s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       cursor: pointer;
     }
-
     .light .task {
       background-color: var(--card-light);
     }
-
     .task.done {
       background-color: var(--check-dark);
       color: white;
     }
-
     .light .task.done {
       background-color: var(--check-light);
       color: white;
     }
-
     .task i {
       font-size: 1.2rem;
       width: 24px;
@@ -143,22 +91,18 @@
       justify-content: center;
       transition: background 0.3s, color 0.3s;
     }
-
     .task.done i {
       background-color: white;
       color: var(--check-dark);
     }
-
     .light .task.done i {
       background-color: white;
       color: var(--check-light);
     }
-
     .task:not(.done) i {
       background: transparent;
       color: #ccc;
     }
-
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -171,11 +115,9 @@
       box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
       z-index: 1000;
     }
-
     .light .bottom-nav {
       background: var(--card-light);
     }
-
     .nav-icon {
       color: var(--text-dark);
       text-decoration: none;
@@ -184,21 +126,17 @@
       flex-direction: column;
       align-items: center;
     }
-
     .nav-icon span {
       font-size: 0.7rem;
       margin-top: 2px;
     }
-
     .light .nav-icon {
       color: var(--text-light);
     }
-
     .home-btn {
       position: relative;
       top: -25px;
     }
-
     .home-circle {
       background: var(--accent-dark);
       color: #fff;
@@ -209,64 +147,49 @@
       justify-content: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
-
     .light .home-circle {
       background: var(--accent-light);
     }
   </style>
 
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+    import {
+      getFirestore, collection, getDocs, query, where
+    } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDOihVhSLNKxcMKsdg_iSd0P_1-K7eRkXw",
       authDomain: "yannapp-d9ea1.firebaseapp.com",
-      projectId: "yannapp-d9ea1",
-      storageBucket: "yannapp-d9ea1.appspot.com",
-      messagingSenderId: "34473176681",
-      appId: "1:34473176681:web:bc6d23f91bdfe1b2f4fcf8"
+      projectId: "yannapp-d9ea1"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const tasksBase = ["Anglais", "Lecture", "Série", "Post Insta LBB", "Post Tiktok LBB", "Petit dej équilibré", "Repas du midi équilibré", "Repas du soir équilibré", "Formation Dev", "Tâche ménagère", "Jouer avec enfant"];
+    const baseTasks = [
+      "Anglais", "Lecture", "Série", "Petit dej équilibré",
+      "Repas du midi équilibré", "Repas du soir équilibré",
+      "Formation Dev", "Tâche ménagère", "Jouer avec enfant"
+    ];
 
-    const taskListEl = document.getElementById("taskList");
     let selectedDate = new Date();
 
-    async function updateDate() {
-      const options = { weekday: 'long', day: 'numeric', month: 'long' };
-      const formatted = selectedDate.toLocaleDateString('fr-FR', options);
-      document.getElementById("currentDate").textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
-      await renderTasks();
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      updateDate();
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+      }
+    });
 
-    function getDateKey() {
-      return selectedDate.toISOString().split("T")[0];
-    }
-
-    async function renderTasks() {
-      const key = getDateKey();
-      const ref = doc(db, "taches", key);
-      const snap = await getDoc(ref);
-      const done = snap.exists() ? snap.data() : {};
-
-      taskListEl.innerHTML = "";
-      tasksBase.forEach(task => {
-        const isDone = done[task];
-        const div = document.createElement("div");
-        div.className = "task" + (isDone ? " done" : "");
-        div.innerHTML = `<span>${task}</span><i class="${isDone ? 'fas fa-check' : 'far fa-circle'}"></i>`;
-        div.addEventListener("click", async () => {
-          done[task] = !done[task];
-          await setDoc(ref, done);
-          renderTasks();
-        });
-        taskListEl.appendChild(div);
-      });
+    function toggleTheme() {
+      const html = document.documentElement;
+      const next = html.classList.contains("light") ? "dark" : "light";
+      html.classList.remove("light", "dark");
+      html.classList.add(next);
+      localStorage.setItem("theme", next);
     }
 
     function changeDate(offset) {
@@ -274,52 +197,83 @@
       updateDate();
     }
 
-    function toggleTheme() {
-      const html = document.documentElement;
-      html.classList.toggle("light");
-      html.classList.toggle("dark");
+    function formatDateLabel(date) {
+      return date.toLocaleDateString("fr-FR", { weekday: 'long', day: 'numeric', month: 'long' });
     }
 
-    window.changeDate = changeDate;
-    window.toggleTheme = toggleTheme;
+    function getDateKey() {
+      return selectedDate.toISOString().split("T")[0];
+    }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      updateDate();
-    });
+    async function updateDate() {
+      document.title = "YannApp – " + formatDateLabel(selectedDate);
+      document.getElementById("dateLabel").textContent = formatDateLabel(selectedDate);
+      await renderTasks();
+    }
+
+    async function isSportPlanned(dateKey) {
+      const q = query(collection(db, "sport-program"), where("date", "==", dateKey));
+      const snap = await getDocs(q);
+      return !snap.empty;
+    }
+
+    async function renderTasks() {
+      const container = document.getElementById("taskList");
+      container.innerHTML = "";
+
+      const key = getDateKey();
+      let data = JSON.parse(localStorage.getItem(key) || "{}");
+
+      const tasks = [...baseTasks];
+      if (await isSportPlanned(key)) {
+        tasks.unshift("Sport");
+      }
+
+      tasks.forEach(task => {
+        const done = data[task];
+        const div = document.createElement("div");
+        div.className = "task" + (done ? " done" : "");
+        div.innerHTML = `<span>${task}</span><i class="${done ? 'fas fa-check' : 'far fa-circle'}"></i>`;
+        div.addEventListener("click", () => {
+          data[task] = !data[task];
+          localStorage.setItem(key, JSON.stringify(data));
+          renderTasks();
+        });
+        container.appendChild(div);
+      });
+    }
   </script>
 </head>
 <body>
-<header>
-  <img src="logo.png" alt="Logo YannApp" />
-  <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
-    <i class="fas fa-adjust"></i>
-  </button>
-</header>
+  <header>
+    <img src="logo.png" alt="YannApp">
+    <button class="toggle-theme" onclick="toggleTheme()" title="Changer de thème">
+      <i class="fas fa-adjust"></i>
+    </button>
+  </header>
 
-<div class="date-navigation">
-  <div class="date-container">
-    <button onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i></button>
-    <span id="currentDate">Date</span>
-    <button onclick="changeDate(1)"><i class="fas fa-chevron-right"></i></button>
+  <div style="text-align: center; margin: 1rem;">
+    <button onclick="changeDate(-1)">←</button>
+    <strong id="dateLabel">Date</strong>
+    <button onclick="changeDate(1)">→</button>
   </div>
-</div>
 
-<div class="todo-list" id="taskList"></div>
+  <div class="task-list" id="taskList"></div>
 
-<nav class="bottom-nav">
-  <a href="sport.html" class="nav-icon">
-    <i class="fas fa-dumbbell"></i>
-    <span>Sport</span>
-  </a>
-  <a href="index.html" class="nav-icon home-btn">
-    <div class="home-circle">
-      <i class="fas fa-home"></i>
-    </div>
-  </a>
-  <a href="lbb.html" class="nav-icon">
-    <i class="fas fa-globe"></i>
-    <span>LBB</span>
-  </a>
-</nav>
+  <nav class="bottom-nav">
+    <a href="sport.html" class="nav-icon">
+      <i class="fas fa-dumbbell"></i>
+      <span>Sport</span>
+    </a>
+    <a href="index.html" class="nav-icon home-btn">
+      <div class="home-circle">
+        <i class="fas fa-home"></i>
+      </div>
+    </a>
+    <a href="lbb.html" class="nav-icon">
+      <i class="fas fa-globe"></i>
+      <span>LBB</span>
+    </a>
+  </nav>
 </body>
 </html>
